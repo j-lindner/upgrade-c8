@@ -7,7 +7,7 @@ helm install --namespace camunda camunda camunda/camunda-platform -f ./Camunda8.
 ```
 
 ## Create sample data
-via process-solution-template-sample-data
+(In this example via a locally deployed Spring Boot App that exposed Rest Endpoints to create Process Instances)
 ```bash
 curl -X POST http://localhost:8080/process/start -H "Content-Type: application/json" -d '{"businessKey": "2302"}'
 ```
