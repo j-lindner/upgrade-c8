@@ -1,0 +1,101 @@
+# Chart values for the Camunda Platform 8 Helm chart.
+# This file deliberately contains only the values that differ from the defaults.
+# For changes and documentation, use your favorite diff tool to compare it with:
+# https://github.com/camunda/camunda-platform-helm/blob/main/charts/camunda-platform/values.yaml
+# See options: https://github.com/camunda/camunda-platform-helm/blob/main/charts/camunda-platform/README.md
+
+global:
+  ingress:
+    enabled: true
+    className: nginx
+    host: "YOUR_DOMAIN.de"
+    tls:
+      enabled: true
+      secretName: "tls-secret"
+  image:
+    tag: 8.4.0
+  identity:
+    auth:
+      publicIssuerUrl: "https://YOUR_DOMAIN.de/auth/realms/camunda-platform"
+      zeebe:
+        existingSecret: EasySecret
+      operate:
+        redirectUrl: "https://YOUR_DOMAIN.de/operate"
+        existingSecret: EasySecret
+      tasklist:
+        redirectUrl: "https://YOUR_DOMAIN.de/tasklist"
+        existingSecret: EasySecret
+      optimize:
+        existingSecret: EasySecret
+      connectors:
+        existingSecret: EasySecret
+      console:
+        existingSecret: EasySecret
+
+operate:
+  contextPath: "/operate"
+
+tasklist:
+  contextPath: "/tasklist"
+
+optimize:
+  enabled: false
+
+connectors:
+  enabled: false
+
+identity:
+  contextPath: "/identity"
+  fullURL: "https://YOUR_DOMAIN.de/identity"
+  keycloak:
+    auth:
+      adminPassword: EasySecret
+      managementPassword: EasySecret
+    extraEnvVars:
+      - name: KEYCLOAK_PROXY_ADDRESS_FORWARDING
+        value: "true"
+      - name: KEYCLOAK_FRONTEND_URL
+        value: "https://YOUR_DOMAIN.de/auth"
+
+zeebe-gateway:
+  ingress:
+    enabled: true
+    className: nginx
+    host: "YOUR_DOMAIN.de"
+  replicas: 1
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2048Mi"
+      cpu: "1000m"
+
+zeebe:
+  clusterSize: 1
+  partitionCount: 1
+  replicationFactor: 1
+  pvcSize: 10Gi
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512M"
+    limits:
+      cpu: "512m"
+      memory: "2Gi"
+  spec:
+    template:
+      spec:
+        securityContext:
+          runAsUser: 1000
+        containers:
+          securityContext:
+            runAsUser: 1000
+
+elasticsearch:
+  image:
+    tag: 8.9.2
+  master:
+    replicaCount: 2
+
